@@ -4,15 +4,20 @@
 import sys,os
 from urllib2 import urlopen, URLError, HTTPError
 from xml.dom import minidom
+################################
+#   Vars you should edit       #
+################################
 
-
+# Make sure your tvdir has a trailing slash and ends with %s
 tvdir = '/home/chrisj/TV/%s'
-#tvdir = 'tmp/%s'
-base_url = 'http://www.thetvdb.com/'
-tmpdir = '/home/chrisj/tmp'
-#tmpdir = 'tmp'
+tmpdir = 'tmp'
 
-language = 'en'
+#################################
+#  Don't edit below here unless #
+#  you know what you're doing   #
+#################################
+
+base_url = 'http://www.thetvdb.com/'
 search_url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
 feed = '{0}/selections.xml'.format(str(tmpdir))
 
@@ -44,11 +49,7 @@ for x in range(len(seriesname)):
 	yesno = raw_input('Found {0}.  Work with this show? (Y/n) '.format(seriesname[x]))
 	if yesno == 'n' or yesno == 'N':
 		continue
-#	yesno = raw_input('Title correct? (Y/n) '.format(seriesname[x]))
-#	if yesno == 'n' or yesno == 'N':
-#		seriesname[x] = raw_input('What should it be? ')
 	print "Downloading possible matches..."
-	#print "{0}".format(search_url % seriesname[x].replace(" ", "%20"))
 	safe_url = seriesname[x]
 	safe_url = safe_url.replace("$", "%26")
 	safe_url = safe_url.replace("+", "%2B")

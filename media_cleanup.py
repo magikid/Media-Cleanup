@@ -1,4 +1,4 @@
-import sys
+import sys,os
 from urllib2 import urlopen, URLError, HTTPError
 from xml.dom import minidom
 
@@ -14,8 +14,7 @@ tvdir = '/home/chrisj/TV/%s'
 #seriesname = 'LOST'
 
 try:
-	f = urlopen(search_url % seriesname)
-	print "Downloading..."
+	f = urlopen(search_url % seriesname)	print "Downloading..."
 	local_file = open(feed, "w")
 	local_file.write(f.read())
 	local_file.close()
@@ -66,7 +65,7 @@ selection -= 1
 sel_id = shows['id'][selection]
 sel_name = shows['name'][selection]
 if not(os.path.exists(tvdir % sel_name)):
-	sel_name = input('What is the directory called? ')
+	os.makedirs(tvdir % sel_name)
 	
 try:
 	f = urlopen(zip_url % sel_id)

@@ -1,12 +1,16 @@
 #!/usr/bin/python
+# -*- coding: latin-1 -*-
 
 import sys,os
 from urllib2 import urlopen, URLError, HTTPError
 from xml.dom import minidom
 
-tvdir = '/home/chrisj/TV/%s'
+
+#tvdir = '/home/chrisj/TV/%s'
+tvdir = 'tmp/%s'
 base_url = 'http://www.thetvdb.com/'
-tmpdir = '/home/chrisj/tmp'
+#tmpdir = '/home/chrisj/tmp'
+tmpdir = 'tmp'
 
 language = 'en'
 search_url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
@@ -36,12 +40,16 @@ for f in os.listdir(tvdir % ''):
 		seriesname.append(f)
 
 for x in range(len(seriesname)):
-	yesno = raw_input('Found {0}.  Title correct? (Y/n) '.format(seriesname[x]))
+	yesno = raw_input('Found {0}.  Work with this show? (Y/n) '.format(seriesname[x]))
+	if yesno == 'n' or yesno == 'N':
+		continue
+	yesno = raw_input('Title correct? (Y/n) '.format(seriesname[x]))
 	if yesno == 'n' or yesno == 'N':
 		seriesname[x] = raw_input('What should it be? ')
 	print "Downloading possible matches..."
+	print "{0}".format(search_url % seriesname[x].replace(" ", "%20"))
 	try:
-		f = urlopen(search_url % seriesname[x])
+		f = urlopen("{0}".format(search_url % seriesname[x].replace(" ", "%20")))
 		local_file = open(feed, "w+b")
 		local_file.write(f.read())
 		local_file.close()
@@ -111,14 +119,14 @@ for x in range(len(seriesname)):
 			local_zip = open(tvdir % sel_name + "/tvshow.nfo", "w+b")
 			local_zip.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
 			local_zip.write('<tvshow>\n')
-			local_zip.write('\t<title>{0}</title>\n'.format(str(sel_name)))
+			local_zip.write('\t<title>{0}</title>\n'.format(sel_name))
 			local_zip.write('\t<episodeguide>\n')
-			local_zip.write('\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>\n'.format(str(sel_id)))
+			local_zip.write('\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>\n'.format(sel_id))
 			local_zip.write('\t</episodeguide>\n')
-			local_zip.write('\t<id>{0}</id>\n'.format(str(sel_id)))
-			local_zip.write('\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,str(sel_banner)))
-			local_zip.write('\t<plot>{0}</plot>\n'.format(str(sel_overview)))
-			local_zip.write('\t<premiered>{0}</premiered>\n'.format(str(sel_airdate)))
+			local_zip.write('\t<id>{0}</id>\n'.format(sel_id))
+			local_zip.write('\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,sel_banner))
+			local_zip.write('\t<plot>{0}</plot>\n'.format(sel_overview.encode('ascii', 'xmlcharrefreplace')))
+			local_zip.write('\t<premiered>{0}</premiered>\n'.format(sel_airdate))
 			local_zip.write('</tvshow>\n')
 			local_zip.write('</xml>\n')
 			local_zip.close()
@@ -132,13 +140,13 @@ for x in range(len(seriesname)):
 		print "Printing XML file: \n"
 		print '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
 		print '<tvshow>'
-		print '\t<title>{0}</title>'.format(str(sel_name))
+		print '\t<title>{0}</title>'.format(sel_name)
 		print '\t<episodeguide>'
-		print '\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>'.format(str(sel_id))
+		print '\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>'.format(sel_id)
 		print '\t</episodeguide>'
-		print '\t<id>{0}</id>'.format(str(sel_id))
-		print '\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,str(sel_banner))
-		print '\t<plot>{0}</plot>'.format(str(sel_overview))
-		print '\t<premiered>{0}</premiered>'.format(str(sel_airdate))
+		print '\t<id>{0}</id>'.format(sel_id)
+		print '\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,sel_banner)
+		print '\t<plot>{0}</plot>'.format(sel_overview.encode('ascii', 'xmlcharrefreplace'))
+		print '\t<premiered>{0}</premiered>'.format(sel_airdate)
 		print '</tvshow>'
 		print '</xml>'

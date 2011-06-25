@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tvshow>
+	<title>Arrested Development</title>
+	<episodeguide>
+		<url cache="72173.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/72173/all/en.zip</url>
+	</episodeguide>
+	<id>72173</id>
+	<thumb>http://www.thetvdb.com/banners/graphical/72173-g.jpg</thumb>

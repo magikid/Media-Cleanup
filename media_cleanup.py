@@ -6,11 +6,11 @@ from urllib2 import urlopen, URLError, HTTPError
 from xml.dom import minidom
 
 
-#tvdir = '/home/chrisj/TV/%s'
-tvdir = 'tmp/%s'
+tvdir = '/home/chrisj/TV/%s'
+#tvdir = 'tmp/%s'
 base_url = 'http://www.thetvdb.com/'
-#tmpdir = '/home/chrisj/tmp'
-tmpdir = 'tmp'
+tmpdir = '/home/chrisj/tmp'
+#tmpdir = 'tmp'
 
 language = 'en'
 search_url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
@@ -39,17 +39,43 @@ for f in os.listdir(tvdir % ''):
 	if os.path.isdir(os.path.join(tvdir % '', f)):
 		seriesname.append(f)
 
+seriesname.sort()
 for x in range(len(seriesname)):
 	yesno = raw_input('Found {0}.  Work with this show? (Y/n) '.format(seriesname[x]))
 	if yesno == 'n' or yesno == 'N':
 		continue
-	yesno = raw_input('Title correct? (Y/n) '.format(seriesname[x]))
-	if yesno == 'n' or yesno == 'N':
-		seriesname[x] = raw_input('What should it be? ')
+#	yesno = raw_input('Title correct? (Y/n) '.format(seriesname[x]))
+#	if yesno == 'n' or yesno == 'N':
+#		seriesname[x] = raw_input('What should it be? ')
 	print "Downloading possible matches..."
-	print "{0}".format(search_url % seriesname[x].replace(" ", "%20"))
+	#print "{0}".format(search_url % seriesname[x].replace(" ", "%20"))
+	safe_url = seriesname[x]
+	safe_url = safe_url.replace("$", "%26")
+	safe_url = safe_url.replace("+", "%2B")
+	safe_url = safe_url.replace(",", "%2C")
+	safe_url = safe_url.replace("/", "%2F")
+	safe_url = safe_url.replace(":", "%3A")
+	safe_url = safe_url.replace(";", "%3B")
+	safe_url = safe_url.replace("=", "%3D")
+	safe_url = safe_url.replace("?", "%3F")
+	safe_url = safe_url.replace("@", "%40")
+	safe_url = safe_url.replace(" ", "%20")
+	safe_url = safe_url.replace("'", "%22")
+	safe_url = safe_url.replace("<", "%3C")
+	safe_url = safe_url.replace(">", "%3E")
+	safe_url = safe_url.replace("#", "%23")
+	safe_url = safe_url.replace("%", "%25")
+	safe_url = safe_url.replace("{", "%7B")
+	safe_url = safe_url.replace("}", "%7D")
+	safe_url = safe_url.replace("|", "%7C")
+	safe_url = safe_url.replace("\\", "%5C")
+	safe_url = safe_url.replace("^", "%5E")
+	safe_url = safe_url.replace("~", "%7E")
+	safe_url = safe_url.replace("[", "%5B")
+	safe_url = safe_url.replace("]", "%5D")
+	safe_url = safe_url.replace("`", "%60")
 	try:
-		f = urlopen("{0}".format(search_url % seriesname[x].replace(" ", "%20")))
+		f = urlopen("{0}".format(search_url % safe_url))
 		local_file = open(feed, "w+b")
 		local_file.write(f.read())
 		local_file.close()
@@ -59,6 +85,13 @@ for x in range(len(seriesname)):
 		print "URL Error:",e.reason
 
 	rss = minidom.parse(feed)
+
+	numselections = len(rss.getElementsByTagName('Series'))
+	if numselections > 15:
+		print "Found more than 15 similar titles."		
+		numselections = 15
+	else:
+		print "Found {0} similar titles.".format(numselections)	
 
 	shows = {'id': [], 'name': [], 'airdate': [], 'overview': [], 'banner': []}
 
@@ -75,11 +108,7 @@ for x in range(len(seriesname)):
 			if len(elements.getElementsByTagName('banner')) > 0:
 				shows['banner'].append(elements.getElementsByTagName('banner')[0].firstChild.data)
 
-	numselections = len(rss.getElementsByTagName('Series'))
-
-	if numselections > 1:
-		if numselections > 15:
-			numselections = 15
+	if numselections > 0:
 		for x in range(numselections):
 			junk = x+1
 			output = '%i. ' % junk

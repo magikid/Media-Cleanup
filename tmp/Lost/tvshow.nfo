@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tvshow>
+	<title>Lost</title>
+	<episodeguide>
+		<url cache="73739.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/73739/all/en.zip</url>
+	</episodeguide>
+	<id>73739</id>
+	<thumb>http://www.thetvdb.com/banners/graphical/73739-g4.jpg</thumb>
+	<plot>After their plane, Oceanic Air flight 815, tore apart whilst thousands of miles off course, the survivors find themselves on a mysterious deserted island where they soon find out they are not alone.</plot>
+	<premiered>2004-09-22</premiered>
+</tvshow>
+</xml>

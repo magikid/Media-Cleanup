@@ -1,5 +1,5 @@
 import urllib
-from xml.etree.ElementTree import parse
+from xml.dom import minidom
 
 language = 'en'
 api_url = 'http://www.thetvdb.com/api/%s'
@@ -7,15 +7,20 @@ search_url = 'GetSeries.php?seriesname=%s'
 apikey = 'D2B2FFFCEEDF7E83'
 seriesname = 'LOST'
 
-feed = urllib.urlopen(api_url % search_url % seriesname)
-rss = parse(feed)
+#feed = urllib.urlopen(api_url % search_url % seriesname)
+feed = 'tmp/selections.xml'
+rss = minidom.parse(feed)
 
-series = []
-for element in rss.findall('data/series'):
-	series.append({
-		'title' : element.get('SeriesName'),
-		'id' : element.get('seriesid'),
-		'fa' : element.get('FirstAired')
-	})
-	print series
+shows = []
 
+for elements in rss.getElementsByTagName('Series'):
+
+		if len(elements.getElementsByTagName('seriesid')) > 0:
+			shows.append('id': elements.getElementsByTagName('seriesid')[0].firstChild.data)
+		if len(elements.getElementsByTagName('SeriesName')) > 0:
+			shows.append('name': elements.getElementsByTagName('SeriesName')[0].firstChild.data)
+		if len(elements.getElementsByTagName('FirstAired')) > 0:
+			shows.append('airdate': elements.getElementsByTagName('FirstAired')[0].firstChild.data)
+
+
+print shows

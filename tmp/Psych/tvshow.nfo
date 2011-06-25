@@ -5,5 +5,8 @@
 		<url cache="79335.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/79335/all/en.zip</url>
 	</episodeguide>
 	<id>79335</id>
+	<thumb>http://www.thetvdb.com/banners/graphical/79335-g4.jpg</thumb>
+	<plot>Psych follows Shawn Spencer who has developed a keen eye for detail after being instructed by his police officer father to note even the most minute details of his surroundings. After Shawn calls in a tip on a crime to the police, he is actually accused of committing the crime. To try to clear his name, Shawn convinces the police that he is a psychic and he begins solving cases for the police force.</plot>
+	<premiered>2006-07-07</premiered>
 </tvshow>
 </xml>

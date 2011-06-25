@@ -1,120 +1,144 @@
+#!/usr/bin/python
+
 import sys,os
 from urllib2 import urlopen, URLError, HTTPError
 from xml.dom import minidom
 
-if len(sys.argv) > 1:
-	seriesname = "%s" % sys.argv[1]
-else:
-	seriesname = raw_input("Show's Title? ")
-
+tvdir = '/home/chrisj/TV/%s'
+base_url = 'http://www.thetvdb.com/'
+tmpdir = '/home/chrisj/tmp'
 
 language = 'en'
 search_url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
-base_url = 'http://www.thetvdb.com/'
-feed = 'tmp/selections.xml'
-#tvdir = '/home/chrisj/TV/%s/'
-tvdir = '/home/chrisj/Documents/projects/media_cleanup/tmp/%s'
+feed = '{0}/selections.xml'.format(str(tmpdir))
 
-print "Downloading..."
-try:
-	f = urlopen(search_url % seriesname)
-	local_file = open(feed, "w")
-	local_file.write(f.read())
-	local_file.close()
-except HTTPError, e:
-	print "HTTP Error:",e.code
-except URLError, e:
-	print "URL Error:",e.reason
 
-rss = minidom.parse(feed)
 
-shows = {'id': [], 'name': [], 'airdate': [], 'overview': [], 'banner': []}
+if len(sys.argv) > 1:
+	if sys.argv[1] == '-h' or sys.argv[1] == '--help':
+		print ''
+		print 'Usage: python media_cleanup.py TVShowDirectory'
+		print 'Takes one argument, your TV show directory, which can be manually configured in the script.'
+		print ''
+		sys.exit()
+	else:
+		tvdir = sys.argv[1] + '%s'
 
-for elements in rss.getElementsByTagName('Series'):
 
-		if len(elements.getElementsByTagName('seriesid')) > 0:
-			shows['id'].append(elements.getElementsByTagName('seriesid')[0].firstChild.data)
-		if len(elements.getElementsByTagName('SeriesName')) > 0:
-			shows['name'].append(elements.getElementsByTagName('SeriesName')[0].firstChild.data)
-		if len(elements.getElementsByTagName('FirstAired')) > 0:
-			shows['airdate'].append(elements.getElementsByTagName('FirstAired')[0].firstChild.data)
-		if len(elements.getElementsByTagName('Overview')) > 0:
-			shows['overview'].append(elements.getElementsByTagName('Overview')[0].firstChild.data)
-		if len(elements.getElementsByTagName('banner')) > 0:
-			shows['banner'].append(elements.getElementsByTagName('banner')[0].firstChild.data)
+if not(os.path.exists(tmpdir)):
+	os.makedirs(tmpdir)
 
-numselections = len(rss.getElementsByTagName('Series'))
+print "Finding titles..."
+seriesname = []
 
-if numselections > 1:
-	if numselections > 20:
-		numselections = 20
-	for x in range(numselections):
-		junk = x+1
-		output = '%i. ' % junk
-		if x < len(shows['id']):
-			output += shows['id'][x]
-		output += " "
-		if x < len(shows['name']):
-			output += shows['name'][x]
-		output += " "
-		if x < len(shows['airdate']):
-			output += shows['airdate'][x]
-		output += " "
-		if x < len(shows['overview']):
-			output += shows['overview'][x][:40]
-		output += "..."
-		print output
-	selection = raw_input('Which one is it? ')
-	selection = int(selection) - 1
-	sel_id = shows['id'][selection]
-	sel_name = shows['name'][selection]
-	sel_banner = shows['banner'][selection]
-	sel_overview = shows['overview'][selection]
-	sel_airdate = shows['airdate'][selection]
-else:
-	sel_id = shows['id'][0]
-	sel_name = shows['name'][0]
-	sel_banner = shows['banner'][0]
-	sel_overview = shows['overview'][0]
-	sel_airdate = shows['airdate'][0]
+for f in os.listdir(tvdir % ''):
+	if os.path.isdir(os.path.join(tvdir % '', f)):
+		seriesname.append(f)
 
-momentoftruth = raw_input('Do you want me to write {0}{1}'.format(tvdir % sel_name, "/tvshow.nfo? (Y/n)? "))
-if not(momentoftruth == 'n' or momentoftruth == 'N'):
-	if not(os.path.exists(tvdir % sel_name)):
-		os.makedirs(tvdir % sel_name)
-	
+for x in range(len(seriesname)):
+	yesno = raw_input('Found {0}.  Title correct? (Y/n) '.format(seriesname[x]))
+	if yesno == 'n' or yesno == 'N':
+		seriesname[x] = raw_input('What should it be? ')
+	print "Downloading possible matches..."
 	try:
-		local_zip = open(tvdir % sel_name + "/tvshow.nfo", "w+b")
-		local_zip.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
-		local_zip.write('<tvshow>\n')
-		local_zip.write('\t<title>{0}</title>\n'.format(str(sel_name)))
-		local_zip.write('\t<episodeguide>\n')
-		local_zip.write('\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>\n'.format(str(sel_id)))
-		local_zip.write('\t</episodeguide>\n')
-		local_zip.write('\t<id>{0}</id>\n'.format(str(sel_id)))
-		local_zip.write('\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,str(sel_banner)))
-		local_zip.write('\t<plot>{0}</plot>\n'.format(str(sel_overview)))
-		local_zip.write('\t<premiered>{0}</premiered>\n'.format(str(sel_airdate)))
-		local_zip.write('</tvshow>\n')
-		local_zip.write('</xml>\n')
-		local_zip.close()
+		f = urlopen(search_url % seriesname[x])
+		local_file = open(feed, "w+b")
+		local_file.write(f.read())
+		local_file.close()
 	except HTTPError, e:
-		print "HTTP Error:", e.code
+		print "HTTP Error:",e.code
 	except URLError, e:
-		print "URL Error: ", e.reason
-	except IOError, e:
-		print "File Error", e.strerror
-else:
-	print "Printing XML file: \n"
-	print '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
-	print '<tvshow>'
-	print '\t<title>{0}</title>'.format(str(sel_name))
-	print '\t<episodeguide>'
-	print '\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>'.format(str(sel_id))
-	print '\t</episodeguide>'
-	print '\t<id>{0}</id>'.format(str(sel_id))
-	print '\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,str(sel_banner))
-	print '\t<plot>{0}</plot>'.format(str(sel_overview))
-	print '\t<premiered>{0}</premiered>'.format(str(sel_airdate))
-	print '</tvshow>'
-	print '</xml>'
+		print "URL Error:",e.reason
+
+	rss = minidom.parse(feed)
+
+	shows = {'id': [], 'name': [], 'airdate': [], 'overview': [], 'banner': []}
+
+	for elements in rss.getElementsByTagName('Series'):
+
+			if len(elements.getElementsByTagName('seriesid')) > 0:
+				shows['id'].append(elements.getElementsByTagName('seriesid')[0].firstChild.data)
+			if len(elements.getElementsByTagName('SeriesName')) > 0:
+				shows['name'].append(elements.getElementsByTagName('SeriesName')[0].firstChild.data)
+			if len(elements.getElementsByTagName('FirstAired')) > 0:
+				shows['airdate'].append(elements.getElementsByTagName('FirstAired')[0].firstChild.data)
+			if len(elements.getElementsByTagName('Overview')) > 0:
+				shows['overview'].append(elements.getElementsByTagName('Overview')[0].firstChild.data)
+			if len(elements.getElementsByTagName('banner')) > 0:
+				shows['banner'].append(elements.getElementsByTagName('banner')[0].firstChild.data)
+
+	numselections = len(rss.getElementsByTagName('Series'))
+
+	if numselections > 1:
+		if numselections > 15:
+			numselections = 15
+		for x in range(numselections):
+			junk = x+1
+			output = '%i. ' % junk
+			if x < len(shows['id']):
+				output += shows['id'][x]
+			output += " "
+			if x < len(shows['name']):
+				output += shows['name'][x]
+			output += " "
+			if x < len(shows['airdate']):
+				output += shows['airdate'][x]
+			output += " "
+			if x < len(shows['overview']):
+				output += shows['overview'][x][:40]
+			output += "..."
+			print output
+		selection = raw_input('Which one is it? ')
+		selection = int(selection) - 1
+		sel_id = shows['id'][selection]
+		sel_name = shows['name'][selection]
+		sel_banner = shows['banner'][selection]
+		sel_overview = shows['overview'][selection]
+		sel_airdate = shows['airdate'][selection]
+	else:
+		sel_id = shows['id'][0]
+		sel_name = shows['name'][0]
+		sel_banner = shows['banner'][0]
+		sel_overview = shows['overview'][0]
+		sel_airdate = shows['airdate'][0]
+
+	momentoftruth = raw_input('Do you want me to write {0}{1}'.format(tvdir % sel_name, "/tvshow.nfo? (Y/n)? "))
+	if not(momentoftruth == 'n' or momentoftruth == 'N'):
+		if not(os.path.exists(tvdir % sel_name)):
+			os.makedirs(tvdir % sel_name)
+	
+		try:
+			local_zip = open(tvdir % sel_name + "/tvshow.nfo", "w+b")
+			local_zip.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
+			local_zip.write('<tvshow>\n')
+			local_zip.write('\t<title>{0}</title>\n'.format(str(sel_name)))
+			local_zip.write('\t<episodeguide>\n')
+			local_zip.write('\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>\n'.format(str(sel_id)))
+			local_zip.write('\t</episodeguide>\n')
+			local_zip.write('\t<id>{0}</id>\n'.format(str(sel_id)))
+			local_zip.write('\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,str(sel_banner)))
+			local_zip.write('\t<plot>{0}</plot>\n'.format(str(sel_overview)))
+			local_zip.write('\t<premiered>{0}</premiered>\n'.format(str(sel_airdate)))
+			local_zip.write('</tvshow>\n')
+			local_zip.write('</xml>\n')
+			local_zip.close()
+		except HTTPError, e:
+			print "HTTP Error:", e.code
+		except URLError, e:
+			print "URL Error: ", e.reason
+		except IOError, e:
+			print "File Error", e.strerror
+	else:
+		print "Printing XML file: \n"
+		print '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
+		print '<tvshow>'
+		print '\t<title>{0}</title>'.format(str(sel_name))
+		print '\t<episodeguide>'
+		print '\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>'.format(str(sel_id))
+		print '\t</episodeguide>'
+		print '\t<id>{0}</id>'.format(str(sel_id))
+		print '\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,str(sel_banner))
+		print '\t<plot>{0}</plot>'.format(str(sel_overview))
+		print '\t<premiered>{0}</premiered>'.format(str(sel_airdate))
+		print '</tvshow>'
+		print '</xml>'

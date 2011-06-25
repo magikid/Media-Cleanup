@@ -2,7 +2,10 @@ import sys,os
 from urllib2 import urlopen, URLError, HTTPError
 from xml.dom import minidom
 
-seriesname = "%s" % sys.argv[1]
+if len(sys.argv) >= 1:
+	seriesname = "%s" % sys.argv[1]
+else:
+	seriesname = input("Show's Title? ")
 
 
 language = 'en'
@@ -10,11 +13,12 @@ search_url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=%s'
 apikey = 'D2B2FFFCEEDF7E83'
 zip_url = 'http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/%s/all/en.zip'
 feed = 'tmp/selections.xml'
-tvdir = '/home/chrisj/TV/%s'
-#seriesname = 'LOST'
+#tvdir = '/home/chrisj/TV/%s/'
+tvdir = '/home/chrisj/Documents/projects/media_cleanup/tmp/%s'
 
 try:
-	f = urlopen(search_url % seriesname)	print "Downloading..."
+	f = urlopen(search_url % seriesname)
+	print "Downloading..."
 	local_file = open(feed, "w")
 	local_file.write(f.read())
 	local_file.close()
@@ -68,11 +72,18 @@ if not(os.path.exists(tvdir % sel_name)):
 	os.makedirs(tvdir % sel_name)
 	
 try:
-	f = urlopen(zip_url % sel_id)
-	local_zip = open(tvdir % shows['name'][selection], "w")
-	local_zip.write(f.read())
+	local_zip = open(tvdir % sel_name + "/tvshow.nfo", "w")
+	local_zip.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
+	local_zip.write('<tvshow>\n')
+	local_zip,write('\t<title>{0}</title>\n'.format(str(sel_name)))
+	local_zip.write('\t<episodeguide>\n')
+	local_zip.write('\t\t<url cache="{0}" .xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>\n'.format(str(sel_id)))
+	local_zip.write('\t</episodeguide>\n')
+	local_zip.write('\t<id>{0}</id>\n'.format(str(sel_id)))
+	local_zip.write('</tvshow>\n')
+	local_zip.write('</xml>\n')
 	local_zip.close()
 except HTTPError, e:
-	print "HTTP Error:",e.code
+	print "HTTP Error:", e.code
 except URLError, e:
-	print "URL Error,e.reason
+	print "URL Error: ", e.reason

@@ -91,6 +91,14 @@ for x in range(len(seriesname)):
 	if numselections > 15:
 		print "Found more than 15 similar titles."		
 		numselections = 15
+	else if numselections < 1:
+		print "Nothing found with that title."
+		yesno = raw_input("Do you want to continue? (Y/n) ")
+		if not(yesno == "N" or yesno == "n")
+			continue
+		else
+			break
+
 	else:
 		print "Found {0} similar titles.".format(numselections)	
 

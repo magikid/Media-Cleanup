@@ -149,11 +149,28 @@ for x in range(len(seriesname)):
 		sel_airdate = shows['airdate'][0]
 
 	momentoftruth = raw_input('Do you want me to write {0}{1}'.format(tvdir % sel_name, "/tvshow.nfo? (Y/n)? "))
+	momentoftruth2 = raw_input('Do you want my to get the banner? (Y/n)'))
+	if not(momentoftruth2 == 'n' or momentoftruth2 == 'N'):
+		if not(os.path.exists(tvdir % sel_name)):
+			os.makedirs(tvdir % sel_name)
+		try:
+			f = urlopen("{0}{1}{3}".format(base_url, "banners/", sel_banner))
+			local_image = open(tvdir % sel_name + "/folder.jpg", "w+b")
+			local_image.write(f.read())
+			local_image.close()
+		except HTTPError, e:
+			print "HTTP Error:", e.code
+		except URLError, e:
+			print "URL Error: ", e.reason
+		except IOError, e:
+			print "File Error", e.strerror
+
 	if not(momentoftruth == 'n' or momentoftruth == 'N'):
 		if not(os.path.exists(tvdir % sel_name)):
 			os.makedirs(tvdir % sel_name)
 	
 		try:
+
 			local_zip = open(tvdir % sel_name + "/tvshow.nfo", "w+b")
 			local_zip.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
 			local_zip.write('<tvshow>\n')
@@ -168,23 +185,23 @@ for x in range(len(seriesname)):
 			local_zip.write('</tvshow>\n')
 			local_zip.write('</xml>\n')
 			local_zip.close()
-		except HTTPError, e:
-			print "HTTP Error:", e.code
-		except URLError, e:
-			print "URL Error: ", e.reason
 		except IOError, e:
 			print "File Error", e.strerror
 	else:
-		print "Printing XML file: \n"
-		print '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
-		print '<tvshow>'
-		print '\t<title>{0}</title>'.format(sel_name)
-		print '\t<episodeguide>'
-		print '\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>'.format(sel_id)
-		print '\t</episodeguide>'
-		print '\t<id>{0}</id>'.format(sel_id)
-		print '\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,sel_banner)
-		print '\t<plot>{0}</plot>'.format(sel_overview.encode('ascii', 'xmlcharrefreplace'))
-		print '\t<premiered>{0}</premiered>'.format(sel_airdate)
-		print '</tvshow>'
-		print '</xml>'
+		yesno = raw_input("Print out XML file instead? (Y/n)")
+		if not(yesno == 'n' or yesno == 'N'):
+			print "Printing XML file: \n"
+			print '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
+			print '<tvshow>'
+			print '\t<title>{0}</title>'.format(sel_name)
+			print '\t<episodeguide>'
+			print '\t\t<url cache="{0}.xml">http://www.thetvdb.com/api/D2B2FFFCEEDF7E83/series/{0}/all/en.zip</url>'.format(sel_id)
+			print '\t</episodeguide>'
+			print '\t<id>{0}</id>'.format(sel_id)
+			print '\t<thumb>{0}banners/{1}</thumb>\n'.format(base_url,sel_banner)
+			print '\t<plot>{0}</plot>'.format(sel_overview.encode('ascii', 'xmlcharrefreplace'))
+			print '\t<premiered>{0}</premiered>'.format(sel_airdate)
+			print '</tvshow>'
+			print '</xml>'
+		else:
+			continue

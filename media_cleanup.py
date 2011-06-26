@@ -51,6 +51,7 @@ for x in range(len(seriesname)):
 		continue
 	print "Downloading possible matches..."
 	safe_url = seriesname[x]
+	safe_url = safe_url.replace("%", "%25")
 	safe_url = safe_url.replace("$", "%26")
 	safe_url = safe_url.replace("+", "%2B")
 	safe_url = safe_url.replace(",", "%2C")
@@ -65,7 +66,6 @@ for x in range(len(seriesname)):
 	safe_url = safe_url.replace("<", "%3C")
 	safe_url = safe_url.replace(">", "%3E")
 	safe_url = safe_url.replace("#", "%23")
-	safe_url = safe_url.replace("%", "%25")
 	safe_url = safe_url.replace("{", "%7B")
 	safe_url = safe_url.replace("}", "%7D")
 	safe_url = safe_url.replace("|", "%7C")

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Data>
 <Series>
-<seriesid>71889</seriesid>
+<seriesid>72073</seriesid>
 <language>en</language>
-<SeriesName>Boy Meets World</SeriesName>
-<banner>graphical/71889-g.jpg</banner>
-<Overview>Boy Meets World chronicles the events and everyday life lessons of Cory Matthews who grows up from a young boy to a married man.
-</Overview>
-<FirstAired>1993-09-01</FirstAired>
-<IMDB_ID>tt0105958</IMDB_ID>
-<zap2it_id>SH083877</zap2it_id>
-<id>71889</id>
+<SeriesName>Star Trek: Deep Space Nine</SeriesName>
+<banner>graphical/72073-g3.jpg</banner>
+<Overview>When the Cardassian occupation of Bajor ended in 2369, the mining space-station Terok Nor was left abandoned, its systems ripped out. By invitation of the provisional Bajoran government, Starfleet stepped in to oversee the rebuilding and day-to-day operations of the newly christened Deep Space Nine. DS9 soon became a center of travel and commerce thanks to a newly found stable wormhole leading to the largely unexplored Gamma Quadrant.</Overview>
+<FirstAired>1993-01-03</FirstAired>
+<IMDB_ID>tt0106145</IMDB_ID>
+<zap2it_id>SH056158</zap2it_id>
+<id>72073</id>
 </Series>
 </Data>

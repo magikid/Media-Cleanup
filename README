@@ -1,21 +1,27 @@
+Media Cleanup
+===============
+
 After getting frustrated with XBMC's scrapers not parsing my TV collection correctly, I decided to help it out by writing tvshow.nfo files with my own script.  After downloading this, don't forget to chmod +x media_cleanup.py
 
-==To Use:==
+To Use:
+---------------
 
-./media_cleanup.py 'tvdir/'
+> chmod +x media_cleanup.py
+> ./media_cleanup.py 'tvdir/'
 
 There are two ways to set your tvdir, you can either open the script in your favorite text editor and replace tvdir and tmpdir with your own values. Or you can put it as an argument.
 
 
-==Things you can set==
+Things you can set
+-------------------
 
-tvdir - This should point to the base folder that your TV shows are in.  It is VITAL TO THE PROGRAM that it end in %s.  The program expects this to be like tvdir/tvshow/season/episode.avi.  For example, on my system it's /home/chrisj/TV/Arrested Development/...  That's about all there is to know about that variable.
+*tvdir* - This should point to the base folder that your TV shows are in.  It is VITAL TO THE PROGRAM that it end in %s.  The program expects this to be like tvdir/tvshow/season/episode.avi.  For example, on my system it's /home/chrisj/TV/Arrested Development/...  That's about all there is to know about that variable.
 
-tmpdir - This is where you want to store the temp files created by the program. By default, it stores them in the tmp folder (which it creates) in the same place as this script.
+*tmpdir* - This is where you want to store the temp files created by the program. By default, it stores them in the tmp folder (which it creates) in the same place as this script.
 
 
 
-If you have any problems or suggestions, feel free to get in touch with me, I'm @magikid on twitter.
+If you have any problems or suggestions, feel free to get in touch with me, I'm [@magikid](http://twitter.com/magikid) on twitter.
 
 Happy viewing!
 Chris

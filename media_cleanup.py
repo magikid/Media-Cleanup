@@ -91,12 +91,12 @@ for x in range(len(seriesname)):
 	if numselections > 15:
 		print "Found more than 15 similar titles."		
 		numselections = 15
-	else if numselections < 1:
+	elif numselections < 1:
 		print "Nothing found with that title."
 		yesno = raw_input("Do you want to continue? (Y/n) ")
-		if not(yesno == "N" or yesno == "n")
+		if not(yesno == "N" or yesno == "n"):
 			continue
-		else
+		else:
 			break
 
 	else:
@@ -117,7 +117,7 @@ for x in range(len(seriesname)):
 			if len(elements.getElementsByTagName('banner')) > 0:
 				shows['banner'].append(elements.getElementsByTagName('banner')[0].firstChild.data)
 
-	if numselections > 0:
+	if numselections > 1:
 		for x in range(numselections):
 			junk = x+1
 			output = '%i. ' % junk
@@ -149,12 +149,13 @@ for x in range(len(seriesname)):
 		sel_airdate = shows['airdate'][0]
 
 	momentoftruth = raw_input('Do you want me to write {0}{1}'.format(tvdir % sel_name, "/tvshow.nfo? (Y/n)? "))
-	momentoftruth2 = raw_input('Do you want my to get the banner? (Y/n)'))
+	momentoftruth2 = raw_input('Do you want my to get the banner? (Y/n)')
 	if not(momentoftruth2 == 'n' or momentoftruth2 == 'N'):
 		if not(os.path.exists(tvdir % sel_name)):
 			os.makedirs(tvdir % sel_name)
+		print "Downloading banner..."
 		try:
-			f = urlopen("{0}{1}{3}".format(base_url, "banners/", sel_banner))
+			f = urlopen("{0}{1}{2}".format(base_url, "banners/", sel_banner))
 			local_image = open(tvdir % sel_name + "/folder.jpg", "w+b")
 			local_image.write(f.read())
 			local_image.close()
